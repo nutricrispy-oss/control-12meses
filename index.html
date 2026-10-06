@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16324f"><link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<title>Control de Caja</title>
+<style>
+:root{--bg:#eef3f8;--card:#fff;--ink:#16324f;--mut:#64748b;--ln:#cbd5e1;--ok:#0f766e;--bad:#b91c1c;--warn:#b45309;--blue:#1d4ed8}
+*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:70px}
+header{background:var(--ink);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center}
+main{max-width:900px;margin:0 auto;padding:12px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--ln);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav a{flex:1;text-align:center;padding:8px 2px;font-size:11px;color:var(--mut);text-decoration:none}nav a b{display:block;font-size:18px}nav a.on{color:var(--ink);font-weight:700}
+.g{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.c{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 1px 3px #0001;margin-bottom:10px}
+.k{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}.v{font-size:19px;font-weight:700;margin-top:2px}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+button,select,input,textarea{font:inherit;padding:9px 11px;border-radius:8px;border:1px solid var(--ln);background:#fff;color:var(--ink);max-width:100%}
+button{border:0;color:#fff;font-weight:600;cursor:pointer}.b1{background:var(--ok)}.b2{background:var(--warn)}.b3{background:var(--blue)}.b4{background:#6d28d9}.b5{background:#475569}.b6{background:#7c2d12}.bx{background:var(--bad)}.bm{background:#eef3f8;color:var(--ink);border:1px solid var(--ln)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}th{background:var(--ink);color:#fff;text-align:left;padding:7px}td{padding:6px 7px;border-bottom:1px solid #e2e8f0}
+.r{text-align:right;white-space:nowrap}.w{overflow-x:auto}.tot td{font-weight:700;background:#f1f5f9}
+dialog{border:0;border-radius:14px;padding:16px;width:min(420px,92vw)}dialog::backdrop{background:#0006}
+dialog label{display:block;margin:8px 0 3px;font-size:12px;color:var(--mut)}dialog input,dialog select,dialog textarea{width:100%}
+h2{margin:6px 0 10px;font-size:18px}.mut{color:var(--mut);font-size:12px}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700}.ab{background:#d1fae5;color:#065f46}.ce{background:#fee2e2;color:#991b1b}
+@media print{header,nav,.bar,.noprint{display:none!important}body{background:#fff;padding:0}.c{box-shadow:none}}
+</style></head><body>
+<header><b>CONTROL DE CAJA <span id="yr"></span></b><span class="mut" style="color:#cbd5e1" id="who"></span></header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<dialog id="dlg"></dialog>
+<script>
+const M=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MAXF=50,KEY='controlcaja12v1';
+const CONC=['Combustible','Salarios','Alquiler','Internet','Agua','ANDE','Recoleccion de Basura','Seguridad','Art. De Oficina','Art. De Limpieza','Mantenimiento de AA','Mantenimiento de impresora','Papeleria','Viaticos','Reparaciones varias','Impuestos','Honorarios','Saldo en Banco','Otros'];
+const fresh=()=>({anio:2026,ini:0,user:'',sel:0,conc:[...CONC],mov:M.map(()=>[]),cie:M.map(()=>({e:'ABIERTO'})),bit:[]});
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('No se pudo guardar en este navegador.')}};
+const gs=n=>'Gs. '+Math.round(n||0).toLocaleString('es-PY');
+const fd=s=>s?s.split('-').reverse().join('/'):'';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cls=n=>n<0?'neg':'pos';
+function log(h,a,d){S.bit.unshift({t:new Date().toISOString(),u:S.user||'-',h,a,d});save()}
+function calc(){let ini=S.ini;return M.map((_,i)=>{const a=S.mov[i].reduce((s,x)=>s+(x.i||0),0),e=S.mov[i].reduce((s,x)=>s+(x.e||0),0),fin=ini+a-e,r={ini,a,e,fin};ini=fin;return r})}
+const closed=i=>S.cie[i].e==='CERRADO';
+let R=calc();
+function go(h){location.hash=h}
+window.onhashchange=render;
+function render(){
+  R=calc();const h=(location.hash||'#dash').slice(1).split('/'),v=h[0];
+  document.getElementById('yr').textContent=S.anio;document.getElementById('who').textContent=S.user;
+  const tabs=[['dash','🏠','Inicio'],['resumen','📊','Resumen'],['buscar','🔎','Buscar'],['conceptos','🏷️','Conceptos'],['bitacora','📜','Bitácora'],['ajustes','⚙️','Ajustes']];
+  document.getElementById('nav').innerHTML=tabs.map(t=>`<a href="#${t[0]}" class="${v===t[0]||(v==='mes'&&t[0]==='dash')?'on':''}"><b>${t[1]}</b>${t[2]}</a>`).join('');
+  const f={dash,mes:()=>mes(+h[1]),resumen,buscar:()=>buscar(h[1]?decodeURIComponent(h[1]):''),conceptos,bitacora,ajustes}[v]||dash;
+  document.getElementById('app').innerHTML=f();scrollTo(0,0)
+}
+/* ---------- DASHBOARD ---------- */
+function dash(){
+  const T=R.reduce((s,r)=>({a:s.a+r.a,e:s.e+r.e}),{a:0,e:0}),sa=S.ini+T.a-T.e;
+  const best=R.reduce((b,r,i)=>r.fin>R[b].fin?i:b,0),i=S.sel,r=R[i],mx=Math.max(1,...R.map(x=>Math.max(x.a,x.e)));
+  const bars=R.map((x,k)=>{const X=k*40+6,ha=x.a/mx*100,he=x.e/mx*100;return `<rect x="${X}" y="${110-ha}" width="14" height="${ha}" fill="#0f766e"/><rect x="${X+16}" y="${110-he}" width="14" height="${he}" fill="#b45309"/><text x="${X+15}" y="124" font-size="9" text-anchor="middle" fill="#64748b">${M[k].slice(0,3)}</text>`}).join('');
+  return `<div class="g"><div class="c"><div class="k">Total ingresos</div><div class="v pos">${gs(T.a)}</div></div>
+  <div class="c"><div class="k">Total egresos</div><div class="v" style="color:var(--warn)">${gs(T.e)}</div></div>
+  <div class="c"><div class="k">Saldo general</div><div class="v ${cls(sa)}">${gs(sa)}</div></div>
+  <div class="c"><div class="k">Mejor mes</div><div class="v">${R.some(x=>x.a||x.e)?M[best]:'—'}</div></div></div>
+  <div class="c"><h2>Consulta rápida por mes</h2>
+  <select onchange="S.sel=+this.value;save();render()">${M.map((m,k)=>`<option value="${k}" ${k===i?'selected':''}>${m}</option>`).join('')}</select>
+  <span class="pill ${closed(i)?'ce':'ab'}">${S.cie[i].e}</span>
+  <div class="g" style="margin-top:8px"><div><div class="k">Ingresos</div><div class="v pos">${gs(r.a)}</div></div><div><div class="k">Egresos</div><div class="v" style="color:var(--warn)">${gs(r.e)}</div></div><div><div class="k">Saldo</div><div class="v ${cls(r.fin)}">${gs(r.fin)}</div></div></div>
+  <div class="bar"><button class="b1" onclick="movDlg(${i},'Ingreso')">+ Registrar ingreso</button><button class="b2" onclick="movDlg(${i},'Egreso')">− Registrar egreso</button>
+  <button class="b3" onclick="go('mes/${i}')">Ir al mes</button><button class="b4" onclick="pdfMes(${i})">PDF del mes</button><button class="b6" onclick="cierreDlg(${i})">Cerrar / reabrir mes</button></div></div>
+  <div class="c"><h2>Acceso rápido a los 12 meses</h2><div class="g" style="grid-template-columns:repeat(auto-fit,minmax(105px,1fr))">${M.map((m,k)=>`<button class="bm" onclick="go('mes/${k}')">${closed(k)?'🔒 ':''}${m}</button>`).join('')}</div></div>
+  <div class="c w"><h2>Ingresos vs egresos</h2><svg viewBox="0 0 490 130" style="width:100%;min-width:420px">${bars}</svg><div class="mut"><span class="pos">■</span> Ingresos &nbsp;<span style="color:var(--warn)">■</span> Egresos</div></div>
+  <div class="bar"><button class="b4" onclick="pdfResumen()">PDF resumen anual</button><button class="b5" onclick="go('conceptos')">Reporte por concepto</button><button class="b5" onclick="go('buscar')">Buscar movimiento</button></div>`
+}
+/* ---------- MES ---------- */
+function mes(i){
+  if(!(i>=0&&i<12))return dash();const r=R[i],rows=S.mov[i];let run=r.ini;
+  const body=rows.map((x,k)=>{run+=(x.i||0)-(x.e||0);return `<tr><td>${k+1}</td><td>${fd(x.f)}</td><td>${esc(x.c)}</td><td class="r">${x.i?gs(x.i):''}</td><td class="r">${x.e?gs(x.e):''}</td><td class="r ${cls(run)}">${gs(run)}</td><td class="noprint"><button class="bx" style="padding:3px 8px" onclick="anularDlg(${i},${k})">✕</button></td></tr>`}).join('');
+  return `<div class="bar"><button class="bm" onclick="go('dash')">← Dashboard</button><button class="b1" onclick="movDlg(${i},'Ingreso')">+ Ingreso</button><button class="b2" onclick="movDlg(${i},'Egreso')">− Egreso</button><button class="b4" onclick="pdfMes(${i})">PDF</button><button class="b6" onclick="cierreDlg(${i})">${closed(i)?'Reabrir':'Cerrar'} mes</button></div>
+  <div class="c"><h2>${M[i].toUpperCase()} ${S.anio} <span class="pill ${closed(i)?'ce':'ab'}">${S.cie[i].e}</span></h2>
+  <div class="g"><div><div class="k">Saldo inicial</div><div class="v">${gs(r.ini)}</div></div><div><div class="k">Ingresos totales</div><div class="v pos">${gs(r.a)}</div></div><div><div class="k">Egresos totales</div><div class="v" style="color:var(--warn)">${gs(r.e)}</div></div><div><div class="k">Saldo total</div><div class="v ${cls(r.fin)}">${gs(r.fin)}</div></div></div></div>
+  <div class="c w"><table><tr><th>#</th><th>Fecha</th><th>Concepto</th><th class="r">Ingresos</th><th class="r">Egresos</th><th class="r">Saldos</th><th class="noprint"></th></tr>${body||'<tr><td colspan="7" class="mut">Sin movimientos.</td></tr>'}<tr class="tot"><td colspan="3">TOTAL</td><td class="r">${gs(r.a)}</td><td class="r">${gs(r.e)}</td><td class="r">${gs(r.fin)}</td><td class="noprint"></td></tr></table><div class="mut" style="margin-top:6px">${rows.length}/${MAXF} filas utilizadas</div></div>`
+}
+/* ---------- DIÁLOGOS ---------- */
+const D=document.getElementById('dlg');
+function dlg(h){D.innerHTML=h;D.showModal()}
+function close_(){D.close()}
+function movDlg(i,tipo){
+  if(closed(i))return alert(`El mes ${M[i]} está CERRADO. Reábralo antes de registrar movimientos.`);
+  if(S.mov[i].length>=MAXF)return alert(`${M[i]} ya tiene ${MAXF} movimientos (límite igual al de la planilla).`);
+  const n=new Date(),d=n.getMonth()===i?n.toISOString().slice(0,10):`${S.anio}-${String(i+1).padStart(2,'0')}-01`;
+  dlg(`<h2>Registrar ${tipo.toLowerCase()} · ${M[i]}</h2><label>Fecha</label><input id="f" type="date" value="${d}"><label>Concepto</label><select id="c">${S.conc.map(c=>`<option>${esc(c)}</option>`).join('')}</select><label>Monto en guaraníes</label><input id="m" type="number" inputmode="numeric" min="1" step="1" placeholder="0">
+  <div class="bar"><button class="${tipo==='Ingreso'?'b1':'b2'}" onclick="addMov(${i},'${tipo}')">Guardar</button><button class="bm" onclick="close_()">Cancelar</button></div>`)
+}
+function addMov(i,tipo){
+  const f=g('f'),c=g('c'),m=+g('m');
+  if(!f)return alert('La fecha no es válida.');if(!c)return alert('Elegí un concepto.');if(!(m>0))return alert('Ingresá un monto mayor que cero.');
+  S.mov[i].push(tipo==='Ingreso'?{f,c,i:m,e:0}:{f,c,i:0,e:m});
+  log(M[i],'Registrar '+tipo,`${c} | ${gs(m)} | Fila ${S.mov[i].length+8}`);close_();render()
+}
+function anularDlg(i,k){
+  if(closed(i))return alert(`El mes ${M[i]} está CERRADO. Reábralo antes de anular.`);
+  const x=S.mov[i][k];
+  dlg(`<h2>Anular movimiento</h2><p>${M[i]} · ${fd(x.f)}<br><b>${esc(x.c)}</b><br>Ingreso: ${gs(x.i)} · Egreso: ${gs(x.e)}</p><label>Motivo (opcional)</label><input id="mo">
+  <div class="bar"><button class="bx" onclick="anular(${i},${k})">Confirmar anulación</button><button class="bm" onclick="close_()">Cancelar</button></div>`)
+}
+function anular(i,k){
+  const x=S.mov[i][k],mo=g('mo').trim();
+  log(M[i],'ANULAR MOVIMIENTO',`Fila ${k+9} | ${x.c} | Ingreso ${gs(x.i)} | Egreso ${gs(x.e)}${mo?' | Motivo: '+mo:''}`);
+  S.mov[i].splice(k,1);save();close_();render()
+}
+function cierreDlg(i){
+  if(closed(i))dlg(`<h2>Reabrir ${M[i]}</h2><p>El mes está CERRADO desde ${new Date(S.cie[i].fecha).toLocaleString('es-PY')}. ¿Reabrirlo?</p><div class="bar"><button class="b3" onclick="cierre(${i})">Reabrir</button><button class="bm" onclick="close_()">Cancelar</button></div>`);
+  else dlg(`<h2>Cerrar ${M[i]}</h2><p>No se podrán registrar ni anular movimientos mientras esté cerrado.</p><label>Observación (opcional)</label><input id="ob"><div class="bar"><button class="b6" onclick="cierre(${i})">Cerrar mes</button><button class="bm" onclick="close_()">Cancelar</button></div>`)
+}
+function cierre(i){
+  if(closed(i)){S.cie[i]={e:'ABIERTO',u:S.user,obs:'Mes reabierto'};log(M[i],'REABRIR MES','Mes reabierto por '+(S.user||'-'))}
+  else{S.cie[i]={e:'CERRADO',fecha:new Date().toISOString(),u:S.user,obs:g('ob')};log(M[i],'CERRAR MES','Saldo final '+gs(R[i].fin))}
+  save();close_();render()
+}
+const g=id=>document.getElementById(id).value;
+/* ---------- PDF (imprimir / guardar como PDF) ---------- */
+function pdfMes(i){go('mes/'+i);setTimeout(()=>{const t=document.title;document.title=`Control_Caja_${M[i]}_${new Date().toISOString().slice(0,10)}`;log(M[i],'Generar PDF','Impresión / PDF');print();document.title=t},200)}
+function pdfResumen(){go('resumen');setTimeout(()=>{const t=document.title;document.title='Resumen_Anual_Control_Caja_'+new Date().toISOString().slice(0,10);log('Resumen Anual','Generar PDF','Impresión / PDF');print();document.title=t},200)}
+/* ---------- RESUMEN ---------- */
+function resumen(){
+  const T=R.reduce((s,r)=>({a:s.a+r.a,e:s.e+r.e}),{a:0,e:0});
+  return `<div class="bar"><button class="b4" onclick="pdfResumen()">PDF resumen anual</button></div><div class="c w"><h2>Resumen anual ${S.anio}</h2><table><tr><th>Mes</th><th class="r">Ingresos</th><th class="r">Egresos</th><th class="r">Saldo</th></tr>
+  ${R.map((r,i)=>`<tr onclick="go('mes/${i}')"><td>${M[i]}</td><td class="r">${gs(r.a)}</td><td class="r">${gs(r.e)}</td><td class="r ${cls(r.fin)}">${gs(r.fin)}</td></tr>`).join('')}
+  <tr class="tot"><td>TOTAL</td><td class="r">${gs(T.a)}</td><td class="r">${gs(T.e)}</td><td class="r">${gs(R[11].fin)}</td></tr></table></div>`
+}
+/* ---------- BUSCAR ---------- */
+function buscar(q){
+  let res='';
+  if(q){const t=q.toLowerCase();let n=0;
+    M.forEach((m,i)=>{let run=R[i].ini;S.mov[i].forEach((x,k)=>{run+=(x.i||0)-(x.e||0);
+      const h=[fd(x.f),x.c,gs(x.i),gs(x.e),String(x.i),String(x.e)].join('|').toLowerCase();
+      if(h.includes(t)){n++;res+=`<tr onclick="go('mes/${i}')"><td>${m}</td><td>${k+9}</td><td>${fd(x.f)}</td><td>${esc(x.c)}</td><td class="r">${x.i?gs(x.i):''}</td><td class="r">${x.e?gs(x.e):''}</td><td class="r">${gs(run)}</td></tr>`}})});
+    log('Sistema','Buscar movimiento',`${q} | Resultados: ${n}`);
+    res=n?`<div class="c w"><div class="mut">${n} movimiento(s)</div><table><tr><th>Mes</th><th>Fila</th><th>Fecha</th><th>Concepto</th><th class="r">Ingreso</th><th class="r">Egreso</th><th class="r">Saldo</th></tr>${res}</table></div>`:'<div class="c">No se encontraron movimientos con el criterio indicado.</div>'}
+  return `<div class="c"><h2>Buscar movimiento</h2><div class="bar"><input id="q" value="${esc(q)}" placeholder="Fecha, concepto o monto" style="flex:1" onkeydown="if(event.key==='Enter')go('buscar/'+encodeURIComponent(this.value.trim()))"><button class="b5" onclick="go('buscar/'+encodeURIComponent(g('q').trim()))">Buscar</button></div></div>${res}`
+}
+/* ---------- REPORTE POR CONCEPTO ---------- */
+function conceptos(){
+  const all=[...S.conc];S.mov.flat().forEach(x=>{if(!all.includes(x.c))all.push(x.c)});
+  const totE=R.reduce((s,r)=>s+r.e,0);
+  const rows=all.map(c=>{const m=S.mov.flat().filter(x=>x.c===c),a=m.reduce((s,x)=>s+x.i,0),e=m.reduce((s,x)=>s+x.e,0);return `<tr><td>${esc(c)}</td><td class="r">${gs(a)}</td><td class="r">${gs(e)}</td><td class="r ${cls(a-e)}">${gs(a-e)}</td><td class="r">${m.filter(x=>x.i||x.e).length}</td><td class="r">${totE?(e/totE*100).toFixed(2)+'%':'0.00%'}</td></tr>`}).join('');
+  log('Sistema','GENERAR REPORTE','Reporte anual por concepto');
+  return `<div class="bar"><button class="b4" onclick="print()">PDF</button></div><div class="c w"><h2>Reporte anual por concepto</h2><table><tr><th>Concepto</th><th class="r">Ingresos</th><th class="r">Egresos</th><th class="r">Neto</th><th class="r">Mov.</th><th class="r">% Egresos</th></tr>${rows}</table></div>`
+}
+/* ---------- BITÁCORA ---------- */
+function bitacora(){
+  return `<div class="c w"><h2>Bitácora</h2><table><tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Hoja</th><th>Acción</th><th>Detalle</th></tr>${S.bit.slice(0,300).map(b=>{const d=new Date(b.t);return `<tr><td>${d.toLocaleDateString('es-PY')}</td><td>${d.toLocaleTimeString('es-PY')}</td><td>${esc(b.u)}</td><td>${esc(b.h)}</td><td>${esc(b.a)}</td><td>${esc(b.d)}</td></tr>`}).join('')||'<tr><td colspan="6" class="mut">Sin registros.</td></tr>'}</table><div class="mut">Se muestran los últimos 300 registros.</div></div>`
+}
+/* ---------- AJUSTES / BACKUP ---------- */
+function ajustes(){
+  return `<div class="c"><h2>Ajustes</h2><label class="mut">Usuario (para bitácora y cierres)</label><input id="u" value="${esc(S.user)}"><label class="mut">Año</label><input id="y" type="number" value="${S.anio}"><label class="mut">Saldo inicial de Enero (Gs.)</label><input id="i" type="number" value="${S.ini}">
+  <label class="mut">Conceptos (uno por línea)</label><textarea id="cs" rows="10" style="width:100%">${esc(S.conc.join('\n'))}</textarea>
+  <div class="bar"><button class="b1" onclick="saveCfg()">Guardar ajustes</button></div></div>
+  <div class="c"><h2>Respaldo</h2><p class="mut">Los datos se guardan solo en este dispositivo. Descargá un respaldo con frecuencia.</p><div class="bar"><button class="b3" onclick="exportar()">Exportar respaldo</button><button class="b5" onclick="document.getElementById('imp').click()">Importar respaldo</button><button class="bx" onclick="borrar()">Borrar todo</button></div><input type="file" id="imp" accept=".json" hidden onchange="importar(this.files[0])"></div>`
+}
+function saveCfg(){
+  S.user=g('u').trim();S.anio=+g('y')||2026;S.ini=+g('i')||0;
+  const c=[...new Set(g('cs').split('\n').map(s=>s.trim()).filter(Boolean))];if(c.length)S.conc=c;
+  log('Sistema','Ajustes','Configuración actualizada');alert('Ajustes guardados.');render()
+}
+function exportar(){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));
+  a.download=`control_caja_respaldo_${new Date().toISOString().slice(0,10)}.json`;a.click();log('Sistema','Respaldo','Exportado')
+}
+function importar(f){
+  if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.mov||d.mov.length!==12)throw 0;if(!confirm('Esto reemplaza los datos actuales. ¿Continuar?'))return;S=d;save();render();alert('Respaldo importado.')}catch(e){alert('Archivo de respaldo no válido.')}};r.readAsText(f)
+}
+function borrar(){if(confirm('¿Borrar TODOS los datos de este dispositivo?')&&confirm('Esta acción no se puede deshacer. ¿Seguro?')){S=fresh();save();go('dash');render()}}
+if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+render();
+</script></body></html>
