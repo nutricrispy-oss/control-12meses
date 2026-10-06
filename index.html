@@ -5,62 +5,71 @@
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <title>Control de Caja</title>
 <style>
-:root{--bg:#eef3f8;--card:#fff;--ink:#16324f;--mut:#64748b;--ln:#cbd5e1;--ok:#0f766e;--bad:#b91c1c;--warn:#b45309;--blue:#1d4ed8}
-*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:70px}
-header{background:var(--ink);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center}
+:root{--hd:#16324f;--bg:#eef3f8;--card:#fff;--ink:#16324f;--mut:#64748b;--ln:#cbd5e1;--ok:#0f766e;--bad:#b91c1c;--warn:#b45309;--blue:#1d4ed8}
+[data-theme=dark]{--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--mut:#94a3b8;--ln:#334155}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--mut:#94a3b8;--ln:#334155}}
+#lg{height:28px;border-radius:4px}#lock{position:fixed;inset:0;background:var(--hd);z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center}#lock[hidden]{display:none}#lock input{text-align:center;font-size:22px;width:180px}.onlyp{display:none}header select{padding:2px 6px;font-weight:700}*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:70px}
+header{background:var(--hd);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center}
 main{max-width:900px;margin:0 auto;padding:12px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--ln);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--ln);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
 nav a{flex:1;text-align:center;padding:8px 2px;font-size:11px;color:var(--mut);text-decoration:none}nav a b{display:block;font-size:18px}nav a.on{color:var(--ink);font-weight:700}
 .g{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .c{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 1px 3px #0001;margin-bottom:10px}
 .k{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}.v{font-size:19px;font-weight:700;margin-top:2px}
 .pos{color:var(--ok)}.neg{color:var(--bad)}
-button,select,input,textarea{font:inherit;padding:9px 11px;border-radius:8px;border:1px solid var(--ln);background:#fff;color:var(--ink);max-width:100%}
-button{border:0;color:#fff;font-weight:600;cursor:pointer}.b1{background:var(--ok)}.b2{background:var(--warn)}.b3{background:var(--blue)}.b4{background:#6d28d9}.b5{background:#475569}.b6{background:#7c2d12}.bx{background:var(--bad)}.bm{background:#eef3f8;color:var(--ink);border:1px solid var(--ln)}
+button,select,input,textarea{font:inherit;padding:9px 11px;border-radius:8px;border:1px solid var(--ln);background:var(--card);color:var(--ink);max-width:100%}
+button{border:0;color:#fff;font-weight:600;cursor:pointer}.b1{background:var(--ok)}.b2{background:var(--warn)}.b3{background:var(--blue)}.b4{background:#6d28d9}.b5{background:#475569}.b6{background:#7c2d12}.bx{background:var(--bad)}.bm{background:var(--bg);color:var(--ink);border:1px solid var(--ln)}
 .bar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-table{width:100%;border-collapse:collapse;font-size:13px}th{background:var(--ink);color:#fff;text-align:left;padding:7px}td{padding:6px 7px;border-bottom:1px solid #e2e8f0}
-.r{text-align:right;white-space:nowrap}.w{overflow-x:auto}.tot td{font-weight:700;background:#f1f5f9}
-dialog{border:0;border-radius:14px;padding:16px;width:min(420px,92vw)}dialog::backdrop{background:#0006}
+table{width:100%;border-collapse:collapse;font-size:13px}th{background:var(--hd);color:#fff;text-align:left;padding:7px}td{padding:6px 7px;border-bottom:1px solid var(--ln)}
+.r{text-align:right;white-space:nowrap}.w{overflow-x:auto}.tot td{font-weight:700;background:var(--bg)}
+dialog{background:var(--card);color:var(--ink);border:0;border-radius:14px;padding:16px;width:min(420px,92vw)}dialog::backdrop{background:#0006}
 dialog label{display:block;margin:8px 0 3px;font-size:12px;color:var(--mut)}dialog input,dialog select,dialog textarea{width:100%}
 h2{margin:6px 0 10px;font-size:18px}.mut{color:var(--mut);font-size:12px}
 .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700}.ab{background:#d1fae5;color:#065f46}.ce{background:#fee2e2;color:#991b1b}
-@media print{header,nav,.bar,.noprint{display:none!important}body{background:#fff;padding:0}.c{box-shadow:none}}
+@media print{:root:root:root{--card:#fff;--ink:#16324f;--bg:#fff;--mut:#64748b;--ln:#cbd5e1}.onlyp{display:block;font-weight:700;margin-bottom:6px}header,nav,.bar,.noprint{display:none!important}body{background:#fff;padding:0}.c{box-shadow:none}}
 </style></head><body>
-<header><b>CONTROL DE CAJA <span id="yr"></span></b><span class="mut" style="color:#cbd5e1" id="who"></span></header>
+<header><span style="display:flex;align-items:center;gap:8px"><img id="lg" alt="" hidden><b>CONTROL DE CAJA <span id="yr"></span></b></span><span class="mut" style="color:#cbd5e1" id="who"></span></header>
 <main id="app"></main>
 <nav id="nav"></nav>
-<dialog id="dlg"></dialog>
+<dialog id="dlg"></dialog><div id="lock" hidden></div>
 <script>
 const M=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MAXF=50,KEY='controlcaja12v1';
 const CONC=['Combustible','Salarios','Alquiler','Internet','Agua','ANDE','Recoleccion de Basura','Seguridad','Art. De Oficina','Art. De Limpieza','Mantenimiento de AA','Mantenimiento de impresora','Papeleria','Viaticos','Reparaciones varias','Impuestos','Honorarios','Saldo en Banco','Otros'];
 const fresh=()=>({anio:2026,ini:0,user:'',sel:0,conc:[...CONC],mov:M.map(()=>[]),cie:M.map(()=>({e:'ABIERTO'})),bit:[]});
 let S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
+function norm(){S.hist=S.hist||{};S.tema=S.tema||'auto';S.emp=S.emp||'';S.bkDias=S.bkDias??7;S.creado=S.creado||new Date().toISOString()}norm();
+const yd=y=>y==S.anio?S:S.hist[y];
+function finY(y){let n=iniEff(y);yd(y).mov.flat().forEach(x=>n+=(x.i||0)-(x.e||0));return n}
+function iniEff(y){return yd(y-1)?finY(y-1):(yd(y).ini||0)}
+const years=()=>[...new Set([S.anio,...Object.keys(S.hist).map(Number)])].sort();
+function setYear(y){y=+y;if(y===S.anio)return;S.hist[S.anio]={ini:S.ini,mov:S.mov,cie:S.cie};const d=S.hist[y];delete S.hist[y];S.anio=y;S.ini=d.ini||0;S.mov=d.mov;S.cie=d.cie;save();render()}
+function newYear(){const y=Math.max(...years())+1,f=finY(y-1),ab=S.cie.filter(c=>c.e!=='CERRADO').length;if(!confirm(`¿Abrir ${y}? El saldo final de ${y-1} (${gs(f)}) pasa como saldo inicial.`+(ab?`\nAtención: ${ab} mes(es) de ${S.anio} siguen abiertos.`:'')))return;S.hist[y]={ini:0,mov:M.map(()=>[]),cie:M.map(()=>({e:'ABIERTO'}))};log('Sistema','NUEVO AÑO',`Año ${y} abierto | Saldo inicial ${gs(f)}`);setYear(y)}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('No se pudo guardar en este navegador.')}};
 const gs=n=>'Gs. '+Math.round(n||0).toLocaleString('es-PY');
 const fd=s=>s?s.split('-').reverse().join('/'):'';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cls=n=>n<0?'neg':'pos';
 function log(h,a,d){S.bit.unshift({t:new Date().toISOString(),u:S.user||'-',h,a,d});save()}
-function calc(){let ini=S.ini;return M.map((_,i)=>{const a=S.mov[i].reduce((s,x)=>s+(x.i||0),0),e=S.mov[i].reduce((s,x)=>s+(x.e||0),0),fin=ini+a-e,r={ini,a,e,fin};ini=fin;return r})}
+function calc(){let ini=iniEff(S.anio);return M.map((_,i)=>{const a=S.mov[i].reduce((s,x)=>s+(x.i||0),0),e=S.mov[i].reduce((s,x)=>s+(x.e||0),0),fin=ini+a-e,r={ini,a,e,fin};ini=fin;return r})}
 const closed=i=>S.cie[i].e==='CERRADO';
 let R=calc();
 function go(h){location.hash=h}
 window.onhashchange=render;
 function render(){
   R=calc();const h=(location.hash||'#dash').slice(1).split('/'),v=h[0];
-  document.getElementById('yr').textContent=S.anio;document.getElementById('who').textContent=S.user;
+  document.documentElement.dataset.theme=S.tema==='auto'?'':S.tema;document.getElementById('yr').innerHTML=`<select onchange="setYear(this.value)">${years().map(y=>`<option ${y==S.anio?'selected':''}>${y}</option>`).join('')}</select>`;document.getElementById('who').textContent=[S.emp,S.user].filter(Boolean).join(' · ');const lg=document.getElementById('lg');lg.hidden=!S.logo;if(S.logo)lg.src=S.logo;
   const tabs=[['dash','🏠','Inicio'],['resumen','📊','Resumen'],['buscar','🔎','Buscar'],['conceptos','🏷️','Conceptos'],['bitacora','📜','Bitácora'],['ajustes','⚙️','Ajustes']];
   document.getElementById('nav').innerHTML=tabs.map(t=>`<a href="#${t[0]}" class="${v===t[0]||(v==='mes'&&t[0]==='dash')?'on':''}"><b>${t[1]}</b>${t[2]}</a>`).join('');
-  const f={dash,mes:()=>mes(+h[1]),resumen,buscar:()=>buscar(h[1]?decodeURIComponent(h[1]):''),conceptos,bitacora,ajustes}[v]||dash;
-  document.getElementById('app').innerHTML=f();scrollTo(0,0)
+  const f={dash,comparar:()=>comparar(h[1],h[2]),mes:()=>mes(+h[1]),resumen,buscar:()=>buscar(h[1]?decodeURIComponent(h[1]):''),conceptos,bitacora,ajustes}[v]||dash;
+  document.getElementById('app').innerHTML=`<div class="onlyp">${S.logo?`<img src="${S.logo}" style="height:48px;vertical-align:middle;margin-right:8px">`:''}${esc(S.emp||'Control de Caja')} · emitido ${new Date().toLocaleDateString('es-PY')}</div>`+f();scrollTo(0,0)
 }
 /* ---------- DASHBOARD ---------- */
 function dash(){
-  const T=R.reduce((s,r)=>({a:s.a+r.a,e:s.e+r.e}),{a:0,e:0}),sa=S.ini+T.a-T.e;
+  const T=R.reduce((s,r)=>({a:s.a+r.a,e:s.e+r.e}),{a:0,e:0}),sa=R[0].ini+T.a-T.e;
   const best=R.reduce((b,r,i)=>r.fin>R[b].fin?i:b,0),i=S.sel,r=R[i],mx=Math.max(1,...R.map(x=>Math.max(x.a,x.e)));
   const bars=R.map((x,k)=>{const X=k*40+6,ha=x.a/mx*100,he=x.e/mx*100;return `<rect x="${X}" y="${110-ha}" width="14" height="${ha}" fill="#0f766e"/><rect x="${X+16}" y="${110-he}" width="14" height="${he}" fill="#b45309"/><text x="${X+15}" y="124" font-size="9" text-anchor="middle" fill="#64748b">${M[k].slice(0,3)}</text>`}).join('');
-  return `<div class="g"><div class="c"><div class="k">Total ingresos</div><div class="v pos">${gs(T.a)}</div></div>
+  return bkBanner()+`<div class="g"><div class="c"><div class="k">Total ingresos</div><div class="v pos">${gs(T.a)}</div></div>
   <div class="c"><div class="k">Total egresos</div><div class="v" style="color:var(--warn)">${gs(T.e)}</div></div>
   <div class="c"><div class="k">Saldo general</div><div class="v ${cls(sa)}">${gs(sa)}</div></div>
   <div class="c"><div class="k">Mejor mes</div><div class="v">${R.some(x=>x.a||x.e)?M[best]:'—'}</div></div></div>
@@ -69,16 +78,16 @@ function dash(){
   <span class="pill ${closed(i)?'ce':'ab'}">${S.cie[i].e}</span>
   <div class="g" style="margin-top:8px"><div><div class="k">Ingresos</div><div class="v pos">${gs(r.a)}</div></div><div><div class="k">Egresos</div><div class="v" style="color:var(--warn)">${gs(r.e)}</div></div><div><div class="k">Saldo</div><div class="v ${cls(r.fin)}">${gs(r.fin)}</div></div></div>
   <div class="bar"><button class="b1" onclick="movDlg(${i},'Ingreso')">+ Registrar ingreso</button><button class="b2" onclick="movDlg(${i},'Egreso')">− Registrar egreso</button>
-  <button class="b3" onclick="go('mes/${i}')">Ir al mes</button><button class="b4" onclick="pdfMes(${i})">PDF del mes</button><button class="b6" onclick="cierreDlg(${i})">Cerrar / reabrir mes</button></div></div>
+  <button class="b3" onclick="go('mes/${i}')">Ir al mes</button><button class="b4" onclick="pdfMes(${i})">PDF del mes</button><button class="b3" onclick="shareMes(${i})">Compartir</button><button class="b6" onclick="cierreDlg(${i})">Cerrar / reabrir mes</button></div></div>
   <div class="c"><h2>Acceso rápido a los 12 meses</h2><div class="g" style="grid-template-columns:repeat(auto-fit,minmax(105px,1fr))">${M.map((m,k)=>`<button class="bm" onclick="go('mes/${k}')">${closed(k)?'🔒 ':''}${m}</button>`).join('')}</div></div>
   <div class="c w"><h2>Ingresos vs egresos</h2><svg viewBox="0 0 490 130" style="width:100%;min-width:420px">${bars}</svg><div class="mut"><span class="pos">■</span> Ingresos &nbsp;<span style="color:var(--warn)">■</span> Egresos</div></div>
-  <div class="bar"><button class="b4" onclick="pdfResumen()">PDF resumen anual</button><button class="b5" onclick="go('conceptos')">Reporte por concepto</button><button class="b5" onclick="go('buscar')">Buscar movimiento</button></div>`
+  <div class="bar"><button class="b4" onclick="pdfResumen()">PDF resumen anual</button><button class="b5" onclick="go('conceptos')">Reporte por concepto</button><button class="b5" onclick="go('buscar')">Buscar movimiento</button><button class="b5" onclick="go('comparar')">Comparar años</button></div>`
 }
 /* ---------- MES ---------- */
 function mes(i){
   if(!(i>=0&&i<12))return dash();const r=R[i],rows=S.mov[i];let run=r.ini;
   const body=rows.map((x,k)=>{run+=(x.i||0)-(x.e||0);return `<tr><td>${k+1}</td><td>${fd(x.f)}</td><td>${esc(x.c)}</td><td class="r">${x.i?gs(x.i):''}</td><td class="r">${x.e?gs(x.e):''}</td><td class="r ${cls(run)}">${gs(run)}</td><td class="noprint"><button class="bx" style="padding:3px 8px" onclick="anularDlg(${i},${k})">✕</button></td></tr>`}).join('');
-  return `<div class="bar"><button class="bm" onclick="go('dash')">← Dashboard</button><button class="b1" onclick="movDlg(${i},'Ingreso')">+ Ingreso</button><button class="b2" onclick="movDlg(${i},'Egreso')">− Egreso</button><button class="b4" onclick="pdfMes(${i})">PDF</button><button class="b6" onclick="cierreDlg(${i})">${closed(i)?'Reabrir':'Cerrar'} mes</button></div>
+  return `<div class="bar"><button class="bm" onclick="go('dash')">← Dashboard</button><button class="b1" onclick="movDlg(${i},'Ingreso')">+ Ingreso</button><button class="b2" onclick="movDlg(${i},'Egreso')">− Egreso</button><button class="b4" onclick="pdfMes(${i})">PDF</button><button class="b3" onclick="shareMes(${i})">Compartir</button><button class="b6" onclick="cierreDlg(${i})">${closed(i)?'Reabrir':'Cerrar'} mes</button></div>
   <div class="c"><h2>${M[i].toUpperCase()} ${S.anio} <span class="pill ${closed(i)?'ce':'ab'}">${S.cie[i].e}</span></h2>
   <div class="g"><div><div class="k">Saldo inicial</div><div class="v">${gs(r.ini)}</div></div><div><div class="k">Ingresos totales</div><div class="v pos">${gs(r.a)}</div></div><div><div class="k">Egresos totales</div><div class="v" style="color:var(--warn)">${gs(r.e)}</div></div><div><div class="k">Saldo total</div><div class="v ${cls(r.fin)}">${gs(r.fin)}</div></div></div></div>
   <div class="c w"><table><tr><th>#</th><th>Fecha</th><th>Concepto</th><th class="r">Ingresos</th><th class="r">Egresos</th><th class="r">Saldos</th><th class="noprint"></th></tr>${body||'<tr><td colspan="7" class="mut">Sin movimientos.</td></tr>'}<tr class="tot"><td colspan="3">TOTAL</td><td class="r">${gs(r.a)}</td><td class="r">${gs(r.e)}</td><td class="r">${gs(r.fin)}</td><td class="noprint"></td></tr></table><div class="mut" style="margin-top:6px">${rows.length}/${MAXF} filas utilizadas</div></div>`
@@ -90,7 +99,7 @@ function close_(){D.close()}
 function movDlg(i,tipo){
   if(closed(i))return alert(`El mes ${M[i]} está CERRADO. Reábralo antes de registrar movimientos.`);
   if(S.mov[i].length>=MAXF)return alert(`${M[i]} ya tiene ${MAXF} movimientos (límite igual al de la planilla).`);
-  const n=new Date(),d=n.getMonth()===i?n.toISOString().slice(0,10):`${S.anio}-${String(i+1).padStart(2,'0')}-01`;
+  const n=new Date(),d=n.getMonth()===i&&n.getFullYear()===S.anio?n.toISOString().slice(0,10):`${S.anio}-${String(i+1).padStart(2,'0')}-01`;
   dlg(`<h2>Registrar ${tipo.toLowerCase()} · ${M[i]}</h2><label>Fecha</label><input id="f" type="date" value="${d}"><label>Concepto</label><select id="c">${S.conc.map(c=>`<option>${esc(c)}</option>`).join('')}</select><label>Monto en guaraníes</label><input id="m" type="number" inputmode="numeric" min="1" step="1" placeholder="0">
   <div class="bar"><button class="${tipo==='Ingreso'?'b1':'b2'}" onclick="addMov(${i},'${tipo}')">Guardar</button><button class="bm" onclick="close_()">Cancelar</button></div>`)
 }
@@ -124,10 +133,45 @@ const g=id=>document.getElementById(id).value;
 /* ---------- PDF (imprimir / guardar como PDF) ---------- */
 function pdfMes(i){go('mes/'+i);setTimeout(()=>{const t=document.title;document.title=`Control_Caja_${M[i]}_${new Date().toISOString().slice(0,10)}`;log(M[i],'Generar PDF','Impresión / PDF');print();document.title=t},200)}
 function pdfResumen(){go('resumen');setTimeout(()=>{const t=document.title;document.title='Resumen_Anual_Control_Caja_'+new Date().toISOString().slice(0,10);log('Resumen Anual','Generar PDF','Impresión / PDF');print();document.title=t},200)}
+/* ---------- COMPARTIR ---------- */
+let SH={};const T0=()=>S.emp||'Control de Caja';
+function shareMes(i){const r=R[i];openShare(`${M[i]} ${S.anio} - ${T0()}`,`*${T0()}*\n${M[i]} ${S.anio}\nSaldo inicial: ${gs(r.ini)}\nIngresos: ${gs(r.a)}\nEgresos: ${gs(r.e)}\nSaldo: ${gs(r.fin)}\n\nÚltimos movimientos:\n`+S.mov[i].slice(-10).map(x=>`${fd(x.f)} ${x.c}: ${x.i?'+'+gs(x.i):'-'+gs(x.e)}`).join('\n'))}
+function shareRes(){openShare(`Resumen anual ${S.anio} - ${T0()}`,`*${T0()}*\nResumen anual ${S.anio}\n`+M.map((m,i)=>`${m}: +${gs(R[i].a)} / -${gs(R[i].e)} = ${gs(R[i].fin)}`).join('\n')+`\n*Saldo final: ${gs(R[11].fin)}*`)}
+function openShare(s,t){SH={s,t};dlg(`<h2>Compartir reporte</h2><div class="bar"><button class="b1" onclick="sh('wa')">WhatsApp</button><button class="b3" onclick="sh('mail')">Correo</button><button class="b5" onclick="sh('nat')">Otras apps</button></div><button class="bm" onclick="close_()">Cerrar</button>`)}
+function sh(k){log('Sistema','Compartir',SH.s+' ('+k+')');if(k==='wa')open('https://wa.me/?text='+encodeURIComponent(SH.t));else if(k==='mail')location.href='mailto:?subject='+encodeURIComponent(SH.s)+'&body='+encodeURIComponent(SH.t);else if(navigator.share)navigator.share({title:SH.s,text:SH.t}).catch(()=>{});else alert('Tu navegador no tiene menú de compartir.');close_()}
+/* ---------- PIN ---------- */
+async function hp(p){const d=new TextEncoder().encode('caja|'+p);if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',d);return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}let h=5381;for(const c of d)h=(h*33^c)>>>0;return'x'+h}
+function lockNow(){if(!S.pin)return;const l=document.getElementById('lock');l.hidden=false;l.innerHTML=`${S.logo?`<img src="${S.logo}" style="height:60px;margin-bottom:12px">`:''}<h2 style="color:#fff">${esc(S.emp||'Control de Caja')}</h2><input id="pn" type="password" inputmode="numeric" maxlength="6" placeholder="PIN" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()"><button class="b1" onclick="unlock()" style="margin-top:10px">Entrar</button><div id="pe" style="color:#fecaca;margin-top:8px"></div>`;setTimeout(()=>{const x=document.getElementById('pn');x&&x.focus()},50)}
+async function unlock(){if(await hp(g('pn'))===S.pin){const l=document.getElementById('lock');l.hidden=true;l.innerHTML=''}else{document.getElementById('pe').textContent='PIN incorrecto';document.getElementById('pn').value=''}}
+let hid=0;document.addEventListener('visibilitychange',()=>{if(document.hidden)hid=Date.now();else if(S.pin&&hid&&Date.now()-hid>120000)lockNow()});
+function pinDlg(){dlg(`<h2>${S.pin?'Cambiar':'Crear'} PIN</h2><label>PIN (4 a 6 dígitos)</label><input id="p1" type="password" inputmode="numeric" maxlength="6"><label>Repetir PIN</label><input id="p2" type="password" inputmode="numeric" maxlength="6"><p class="mut">Si olvidás el PIN, solo se recupera borrando los datos del navegador. Hacé respaldos.</p><div class="bar"><button class="b1" onclick="setPin()">Guardar</button><button class="bm" onclick="close_()">Cancelar</button></div>`)}
+async function setPin(){const a=g('p1');if(!/^\d{4,6}$/.test(a))return alert('El PIN debe tener de 4 a 6 números.');if(a!==g('p2'))return alert('Los PIN no coinciden.');S.pin=await hp(a);log('Sistema','PIN','PIN configurado');close_();render()}
+function quitarPin(){if(confirm('¿Quitar el PIN de acceso?')){delete S.pin;log('Sistema','PIN','PIN eliminado');render()}}
+/* ---------- LOGO ---------- */
+function setLogo(f){if(!f)return;const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,300/im.width,300/im.height),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.logo=c.toDataURL('image/png');URL.revokeObjectURL(u);log('Sistema','Logo','Logo actualizado');render()};im.onerror=()=>alert('No se pudo leer la imagen.');im.src=u}
+function quitarLogo(){S.logo='';log('Sistema','Logo','Logo eliminado');render()}
+/* ---------- EXPORTAR / RESPALDO ---------- */
+function dl(n,t,m){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()}
+const qv=v=>typeof v==='number'?v:`"${String(v).replace(/"/g,'""')}"`;
+const csv=r=>'\ufeff'+r.map(a=>a.map(qv).join(';')).join('\r\n');
+function csvMov(){const r=[['Año','Mes','Fecha','Concepto','Ingreso','Egreso','Saldo']];M.forEach((m,i)=>{let run=R[i].ini;S.mov[i].forEach(x=>{run+=(x.i||0)-(x.e||0);r.push([S.anio,m,fd(x.f),x.c,x.i||0,x.e||0,run])})});dl(`Movimientos_${S.anio}.csv`,csv(r),'text/csv');log('Sistema','Exportar CSV','Movimientos '+S.anio)}
+function csvRes(){const r=[['Mes','Saldo inicial','Ingresos','Egresos','Saldo']];R.forEach((x,i)=>r.push([M[i],x.ini,x.a,x.e,x.fin]));dl(`Resumen_${S.anio}.csv`,csv(r),'text/csv');log('Sistema','Exportar CSV','Resumen '+S.anio)}
+function bkBanner(){if(!S.bkDias||(!S.mov.flat().length&&!Object.keys(S.hist).length))return'';const d=Math.floor((Date.now()-new Date(S.lastBk||S.creado))/864e5);return d>=S.bkDias?`<div class="c" style="border-left:4px solid var(--warn)">⚠️ ${S.lastBk?`Hace ${d} días que no hacés un respaldo.`:'Todavía no hiciste ningún respaldo.'} <button class="b3" onclick="exportar()">Exportar ahora</button></div>`:''}
+/* ---------- COMPARATIVO ANUAL ---------- */
+function comparar(a,b){
+  const ys=years();if(ys.length<2)return `<div class="c"><h2>Comparativo anual</h2><p class="mut">Necesitás al menos dos años. Abrí el año siguiente desde Ajustes.</p></div>`;
+  a=+a||ys[ys.length-2];b=+b||ys[ys.length-1];
+  const mt=(y,i)=>{const m=(yd(y)||{mov:M.map(()=>[])}).mov[i];return{a:m.reduce((s,x)=>s+(x.i||0),0),e:m.reduce((s,x)=>s+(x.e||0),0)}};
+  const so=v=>`<select id="${v==a?'ca':'cb'}" onchange="go('comparar/'+g('ca')+'/'+g('cb'))">${ys.map(y=>`<option ${y==v?'selected':''}>${y}</option>`).join('')}</select>`;
+  let T=[0,0,0,0];
+  const rows=M.map((m,i)=>{const x=mt(a,i),y=mt(b,i);T[0]+=x.a;T[1]+=y.a;T[2]+=x.e;T[3]+=y.e;return `<tr><td>${m}</td><td class="r">${gs(x.a)}</td><td class="r">${gs(y.a)}</td><td class="r">${gs(x.e)}</td><td class="r">${gs(y.e)}</td><td class="r ${cls(y.a-y.e-(x.a-x.e))}">${gs(y.a-y.e-(x.a-x.e))}</td></tr>`}).join('');
+  const vp=(p,q)=>p?((q-p)/p*100).toFixed(1)+'%':'—';
+  return `<div class="bar"><button class="b4" onclick="print()">PDF</button></div><div class="c"><h2>Comparativo anual</h2>${so(a)} contra ${so(b)}</div><div class="c w"><table><tr><th>Mes</th><th class="r">Ingresos ${a}</th><th class="r">Ingresos ${b}</th><th class="r">Egresos ${a}</th><th class="r">Egresos ${b}</th><th class="r">Neto: dif.</th></tr>${rows}<tr class="tot"><td>TOTAL</td><td class="r">${gs(T[0])}</td><td class="r">${gs(T[1])}</td><td class="r">${gs(T[2])}</td><td class="r">${gs(T[3])}</td><td class="r">${gs(T[1]-T[3]-(T[0]-T[2]))}</td></tr><tr><td>Variación</td><td></td><td class="r">${vp(T[0],T[1])}</td><td></td><td class="r">${vp(T[2],T[3])}</td><td></td></tr></table><p class="mut">Saldo final ${a}: ${gs(finY(a))} · ${b}: ${gs(finY(b))}</p></div>`
+}
 /* ---------- RESUMEN ---------- */
 function resumen(){
   const T=R.reduce((s,r)=>({a:s.a+r.a,e:s.e+r.e}),{a:0,e:0});
-  return `<div class="bar"><button class="b4" onclick="pdfResumen()">PDF resumen anual</button></div><div class="c w"><h2>Resumen anual ${S.anio}</h2><table><tr><th>Mes</th><th class="r">Ingresos</th><th class="r">Egresos</th><th class="r">Saldo</th></tr>
+  return `<div class="bar"><button class="b4" onclick="pdfResumen()">PDF resumen anual</button><button class="b3" onclick="shareRes()">Compartir</button><button class="b5" onclick="go('comparar')">Comparar años</button><button class="b5" onclick="csvRes()">Excel/CSV</button></div><div class="c w"><h2>Resumen anual ${S.anio}</h2><table><tr><th>Mes</th><th class="r">Ingresos</th><th class="r">Egresos</th><th class="r">Saldo</th></tr>
   ${R.map((r,i)=>`<tr onclick="go('mes/${i}')"><td>${M[i]}</td><td class="r">${gs(r.a)}</td><td class="r">${gs(r.e)}</td><td class="r ${cls(r.fin)}">${gs(r.fin)}</td></tr>`).join('')}
   <tr class="tot"><td>TOTAL</td><td class="r">${gs(T.a)}</td><td class="r">${gs(T.e)}</td><td class="r">${gs(R[11].fin)}</td></tr></table></div>`
 }
@@ -156,24 +200,23 @@ function bitacora(){
 }
 /* ---------- AJUSTES / BACKUP ---------- */
 function ajustes(){
-  return `<div class="c"><h2>Ajustes</h2><label class="mut">Usuario (para bitácora y cierres)</label><input id="u" value="${esc(S.user)}"><label class="mut">Año</label><input id="y" type="number" value="${S.anio}"><label class="mut">Saldo inicial de Enero (Gs.)</label><input id="i" type="number" value="${S.ini}">
+  return `<div class="c"><h2>Ajustes</h2><label class="mut">Tema</label><select id="th">${[["auto","Automático (del teléfono)"],["claro","Claro"],["oscuro","Oscuro"]].map(t=>`<option value="${t[0]==="claro"?"light":t[0]==="oscuro"?"dark":"auto"}" ${S.tema===(t[0]==="claro"?"light":t[0]==="oscuro"?"dark":"auto")?"selected":""}>${t[1]}</option>`).join("")}</select><label class="mut">Nombre de la empresa (aparece en reportes)</label><input id="em" value="${esc(S.emp)}"><label class="mut">Usuario (para bitácora y cierres)</label><input id="u" value="${esc(S.user)}"><label class="mut">Año de trabajo</label><div class="bar"><select onchange="setYear(this.value)">${years().map(y=>`<option ${y==S.anio?'selected':''}>${y}</option>`).join('')}</select><button class="b6" onclick="newYear()">Abrir año ${Math.max(...years())+1}</button></div>${yd(S.anio-1)?`<p class="mut">Saldo inicial de Enero: ${gs(R[0].ini)} (viene del cierre de ${S.anio-1}).</p>`:`<label class="mut">Saldo inicial de Enero (Gs.)</label><input id="i" type="number" value="${S.ini}">`}
   <label class="mut">Conceptos (uno por línea)</label><textarea id="cs" rows="10" style="width:100%">${esc(S.conc.join('\n'))}</textarea>
   <div class="bar"><button class="b1" onclick="saveCfg()">Guardar ajustes</button></div></div>
-  <div class="c"><h2>Respaldo</h2><p class="mut">Los datos se guardan solo en este dispositivo. Descargá un respaldo con frecuencia.</p><div class="bar"><button class="b3" onclick="exportar()">Exportar respaldo</button><button class="b5" onclick="document.getElementById('imp').click()">Importar respaldo</button><button class="bx" onclick="borrar()">Borrar todo</button></div><input type="file" id="imp" accept=".json" hidden onchange="importar(this.files[0])"></div>`
+  <div class="c"><h2>Seguridad y marca</h2><label class="mut">PIN de acceso (${S.pin?'activado':'desactivado'})</label><div class="bar"><button class="b3" onclick="pinDlg()">${S.pin?'Cambiar PIN':'Crear PIN'}</button>${S.pin?'<button class="bx" onclick="quitarPin()">Quitar PIN</button>':''}</div>
+  <label class="mut">Logo de la empresa (se muestra en la app y en los PDF)</label>${S.logo?`<div><img src="${S.logo}" style="max-height:70px;background:#fff;padding:4px;border-radius:6px"></div>`:''}<div class="bar"><button class="b5" onclick="document.getElementById('lgf').click()">${S.logo?'Cambiar logo':'Subir logo'}</button>${S.logo?'<button class="bx" onclick="quitarLogo()">Quitar logo</button>':''}</div><input type="file" id="lgf" accept="image/*" hidden onchange="setLogo(this.files[0])"></div>
+  <div class="c"><h2>Respaldo</h2><p class="mut">Los datos se guardan solo en este dispositivo. Descargá un respaldo con frecuencia.</p><label class="mut">Recordarme hacer respaldo</label><select onchange="S.bkDias=+this.value;save()">${[[0,'Nunca'],[7,'Cada 7 días'],[15,'Cada 15 días'],[30,'Cada 30 días']].map(o=>`<option value="${o[0]}" ${S.bkDias===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><div class="bar"><button class="b3" onclick="exportar()">Exportar respaldo</button><button class="b5" onclick="csvMov()">Movimientos (Excel/CSV)</button><button class="b5" onclick="csvRes()">Resumen (Excel/CSV)</button><button class="b5" onclick="document.getElementById('imp').click()">Importar respaldo</button><button class="bx" onclick="borrar()">Borrar todo</button></div><input type="file" id="imp" accept=".json" hidden onchange="importar(this.files[0])"></div>`
 }
 function saveCfg(){
-  S.user=g('u').trim();S.anio=+g('y')||2026;S.ini=+g('i')||0;
+  S.user=g('u').trim();S.emp=g('em').trim();S.tema=g('th');const ie=document.getElementById('i');if(ie)S.ini=+ie.value||0;
   const c=[...new Set(g('cs').split('\n').map(s=>s.trim()).filter(Boolean))];if(c.length)S.conc=c;
   log('Sistema','Ajustes','Configuración actualizada');alert('Ajustes guardados.');render()
 }
-function exportar(){
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));
-  a.download=`control_caja_respaldo_${new Date().toISOString().slice(0,10)}.json`;a.click();log('Sistema','Respaldo','Exportado')
-}
+function exportar(){S.lastBk=new Date().toISOString();log('Sistema','Respaldo','Exportado');dl(`control_caja_respaldo_${S.anio}_${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(S),'application/json');render()}
 function importar(f){
-  if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.mov||d.mov.length!==12)throw 0;if(!confirm('Esto reemplaza los datos actuales. ¿Continuar?'))return;S=d;save();render();alert('Respaldo importado.')}catch(e){alert('Archivo de respaldo no válido.')}};r.readAsText(f)
+  if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.mov||d.mov.length!==12)throw 0;if(!confirm('Esto reemplaza los datos actuales. ¿Continuar?'))return;S=d;norm();save();render();alert('Respaldo importado.')}catch(e){alert('Archivo de respaldo no válido.')}};r.readAsText(f)
 }
 function borrar(){if(confirm('¿Borrar TODOS los datos de este dispositivo?')&&confirm('Esta acción no se puede deshacer. ¿Seguro?')){S=fresh();save();go('dash');render()}}
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-render();
+lockNow();render();
 </script></body></html>
